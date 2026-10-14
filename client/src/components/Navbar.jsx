@@ -72,8 +72,8 @@ return (
           {showCreditPopup && (
             <div className="absolute right-[-50px] mt-3 w-64 bg-white shadow-xl border border-gray-200 rounded-xl p-5 z-50">
               <p className="text-sm text-gray-600 mb-4">
-                Need more credits to continue interviews?
-              </p>
+  Need more credits? 
+</p>
               <button
                 onClick={() => navigate("/pricing")}
                 className="w-full bg-black text-white py-2 rounded-lg text-sm"
