@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux'
 import { motion } from "motion/react";
 import{BsRobot, BsCoin} from "react-icons/bs";
@@ -31,6 +31,45 @@ function Navbar() {
     }
   }
 
+  const [timeLeft, setTimeLeft] = useState("");
+
+const refreshUser = async () => {
+  try {
+    const result = await axios.get(serverUrl + "/api/user/current-user", {
+      withCredentials: true,
+    });
+    dispatch(setUserData(result.data));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Countdown: popup khula ho tabhi chalega
+useEffect(() => {
+  if (!showCreditPopup || !userData?.nextRefillAt) {
+    setTimeLeft("");
+    return;
+  }
+
+  let id;
+  const tick = () => {
+    const diff = new Date(userData.nextRefillAt).getTime() - Date.now();
+    if (diff <= 0) {
+      setTimeLeft("00:00");
+      clearInterval(id);
+      refreshUser();          // refill ho gaya, naye credits le aao
+      return;
+    }
+    const m = String(Math.floor(diff / 60000)).padStart(2, "0");
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+    setTimeLeft(`${m}:${s}`);
+  };
+
+  tick();
+  id = setInterval(tick, 1000);
+  return () => clearInterval(id);
+}, [showCreditPopup, userData?.nextRefillAt]);
+
  
 return (
   <div className="bg-[#f3f3f3] flex justify-center px-4 pt-6">
@@ -55,34 +94,35 @@ return (
         {/* Credits */}
         <div className="relative">
           <button
-            onClick={() => {
-              if (!userData) {
-                  setShowAuth(true);
-                  return;
-                }
-                setShowCreditPopup(!showCreditPopup);
-              setShowUserPopup(false);
-            }}
-            className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition"
-          >
-            <BsCoin size={20} />
-            {userData?.credits || 0}
-          </button>
-
+  onClick={async () => {
+    if (!userData) {
+      setShowAuth(true);
+      return;
+    }
+    await refreshUser();
+    setShowCreditPopup(!showCreditPopup);
+    setShowUserPopup(false);
+  }}
+  className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition"
+>
+  <BsCoin size={20} />
+  {userData?.credits || 0}
+</button>
           {showCreditPopup && (
-            <div className="absolute right-[-50px] mt-3 w-64 bg-white shadow-xl border border-gray-200 rounded-xl p-5 z-50">
-              <p className="text-sm text-gray-600 mb-4">
-  Need more credits? 
-</p>
-              <button
-                onClick={() => navigate("/pricing")}
-                className="w-full bg-black text-white py-2 rounded-lg text-sm"
-              >
-                Buy more credits
-              </button>
-            </div>
-          )}
-        </div>
+  <div className="absolute right-[-50px] mt-3 w-64 bg-white shadow-xl border border-gray-200 rounded-xl p-5 z-50">
+    <p className="text-sm text-gray-600 mb-2">
+      Free credits refill <b>+50 every 30 min</b> (max 100).
+    </p>
+    {userData?.credits >= 100 ? (
+      <p className="text-sm text-emerald-600 font-medium">Credits full ✅</p>
+    ) : (
+      <p className="text-sm text-gray-700">
+        Next refill in:{" "}
+        <span className="font-semibold text-emerald-600">{timeLeft || "--:--"}</span>
+      </p>
+    )}
+  </div>
+)}        </div>
 
         {/* Profile */}
         <div className="relative">

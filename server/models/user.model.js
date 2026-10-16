@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, unique: true, required: true },
     credits: { type: Number, default: 100 },
-    lastRefillAt: { type: Date, default: Date.now }, 
+    lastRefillAt: { type: Date, default: Date.now },   // 👈 NEW
   },
   { timestamps: true }
 );

@@ -3,6 +3,7 @@ import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { askAi } from "../services/openRouter.services.js";
 import User from "../models/user.model.js";
 import Interview from "../models/interview.model.js";
+import refillCredits from "../utils/refillCredits.js";
 
 
 export const analyzeResume = async (req, res) => {
@@ -75,13 +76,15 @@ export const generateQuestion = async (req, res) => {
     }
 
     let user = await User.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-      
-    if (user.credits < 50) {
-      return res.status(400).json({ message: "Not enough credits. Minimum 50 required." });
-    }
+if (!user) {
+  return res.status(404).json({ message: "User not found" });
+}
+
+user = await refillCredits(user);   // 👈 NEW: check se PEHLE
+
+if (user.credits < 50) {
+  return res.status(400).json({ message: "Not enough credits. Please wait for refill." });
+}
 
     const projectText = Array.isArray(projects) && projects.length ? projects.join(", ") : "None";
     const skillsText = Array.isArray(skills) && skills.length ? skills.join(", ") : "None";

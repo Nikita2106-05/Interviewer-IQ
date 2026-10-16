@@ -1,6 +1,5 @@
-
 import User from "../models/user.model.js";
-
+import refillCredits, { getNextRefillAt } from "../utils/refillCredits.js";
 
 export const getCurrentUser = async (req, res) => {
   try {
@@ -10,11 +9,13 @@ export const getCurrentUser = async (req, res) => {
       return res.status(404).json({ message: "user does not found" });
     }
 
-    
+    user = await refillCredits(user);
 
-    return res.status(200).json(user);
+    const data = user.toObject();
+    data.nextRefillAt = getNextRefillAt(user);
+
+    return res.status(200).json(data);
   } catch (error) {
-    console.log("GET CURRENT USER ERROR:", error);
     return res.status(500).json({ message: `failed to get current user ${error}` });
   }
 };

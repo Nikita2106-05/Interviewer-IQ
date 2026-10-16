@@ -63,6 +63,7 @@ function Step1SetUp({ onStart }) {
       onStart(result.data);
     } catch (error) {
       console.log(error);
+      alert(error.response?.data?.message || "Something went wrong");   // 👈 NEW
       setLoading(false);
     }
   };
