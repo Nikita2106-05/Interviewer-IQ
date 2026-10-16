@@ -78,7 +78,7 @@ export const generateQuestion = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+      
     if (user.credits < 50) {
       return res.status(400).json({ message: "Not enough credits. Minimum 50 required." });
     }
