@@ -28,10 +28,10 @@ app.use("/api/interview", interviewRouter
   
 );
 
-const PORT = process.env.port || 6000;
+const PORT = process.env.port || 8000;
 
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
   connectDb();
 });
