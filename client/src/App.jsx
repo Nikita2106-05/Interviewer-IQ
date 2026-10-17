@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import InterviewPage from "./pages/InterviewPage";
 import InterviewHistory from "./pages/InterviewHistory";
 
-export const serverUrl = "http://localhost:8000";
+export const serverUrl = "https://interviewer-iq.onrender.com";
 function App() {
   const dispatch = useDispatch();
    useEffect(() => {
