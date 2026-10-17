@@ -8,7 +8,7 @@ import { setUserData } from "./redux/userSlice";
 import { useDispatch } from "react-redux";
 import InterviewPage from "./pages/InterviewPage";
 import InterviewHistory from "./pages/InterviewHistory";
-
+import InterviewReport from "./pages/InterviewReport";
 export const serverUrl = "https://interviewer-iq.onrender.com";
 function App() {
   const dispatch = useDispatch();
@@ -34,7 +34,7 @@ function App() {
         <Route path='/auth' element={<Auth />} />
         <Route path='/interview' element={<InterviewPage />} />
         <Route path="/history" element={<InterviewHistory />} />
-        
+        <Route path="/report" element={<InterviewReport />} />
 
       </Routes>
   );
